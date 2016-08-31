@@ -1,0 +1,111 @@
+package iyzico;
+
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+public class Test_automation {
+
+	public static void waitForPresence(WebDriver driver, String type, String item) {
+        if (type.equals("id")) {
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.id(item)));
+        }
+        else if (type.equals("className")) {
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.className(item)));            
+        }
+        else if(type.equals("xpath")){
+        	 WebDriverWait wait = new WebDriverWait(driver, 10);
+             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(item)));
+        }
+    }
+	
+	public static void main(String[] args) throws InterruptedException	{
+		
+		System.setProperty("webdriver.chrome.driver","C:\\Users\\Tuna ATMACA\\workspace\\chromedriver.exe"); //For working; Where does chromedriver storage on the system? 
+		WebDriver driver = new ChromeDriver();
+		driver.get("https://sandbox-merchant.iyzipay.com/login"); //Url
+		driver.manage().window().maximize();
+		
+		
+		//For Sign up 
+		driver.findElement(By.id("not-member")).click();
+		driver.findElement(By.id("email")).sendKeys("tunatmaca@gmail.com");
+		driver.findElement(By.id("secretWord")).sendKeys("Ta123450"); //After every executed.It should be chanced.
+		driver.findElement(By.id("confirmSecretWord")).sendKeys("Ta123450"); //After every executed.It should be chanced.
+		driver.findElement(By.id("phoneNumber")).sendKeys("5496245859");
+		driver.findElement(By.className("btn-dark")).click();     			
+		
+		
+		WebElement alreadyMember = driver.findElement(By.className("toast-title"));
+		if(alreadyMember.isDisplayed()){
+			driver.findElement(By.id("already-member")).click();
+		}
+		
+		//For Sign in
+		driver.findElement(By.id("email")).sendKeys("tunatmaca@gmail.com");
+		driver.findElement(By.id("password")).sendKeys("Ta123450"); //After every executed.It should be chanced.
+		driver.findElement(By.className("btn-primary")).click();
+		Thread.sleep(1000);
+		
+		//Settings Part
+		driver.findElement(By.className("fa-angle-down")).click();
+		driver.findElement(By.xpath("/html/body/div[2]/div[2]/nav/ul[2]/li/ul/li[1]/a")).click();
+		Thread.sleep(2000);
+		//Check The IP Keys
+		driver.findElement(By.className("click-to-reveal")).click();
+		WebElement ipKeys = driver.findElement(By.xpath("/html/body/div[2]/div[2]/section/div[4]/div/div/div[2]/form/div[1]/div/pre"));
+		Assert.assertEquals(true, ipKeys.isDisplayed());
+		
+		
+		//Editing Informations
+		driver.findElement(By.id("merchantId")).sendKeys("1");
+		driver.findElement(By.id("workingArea")).sendKeys("2");
+		driver.findElement(By.id("legalCompanyTitle")).sendKeys("3");
+		driver.findElement(By.id("website")).sendKeys("4");
+		driver.findElement(By.id("iban")).sendKeys("5");
+		Thread.sleep(1000);
+		driver.findElement(By.id("logoUrl")).sendKeys("www.12345.com.tr");
+		driver.findElement(By.className("btn")).click();
+		Thread.sleep(1000);
+		driver.findElement(By.id("forceThreeDsAmount")).sendKeys("3500");
+		driver.findElement(By.className("btn")).click();
+		Thread.sleep(2000);
+		
+		//Profile Editing
+		waitForPresence(driver, "className", "fa-angle-down");
+		driver.findElement(By.className("fa-angle-down")).click();
+		waitForPresence(driver, "xpath", "/html/body/div[2]/div[2]/nav/ul[2]/li/ul/li[2]/a");
+		driver.findElement(By.xpath("/html/body/div[2]/div[2]/nav/ul[2]/li/ul/li[2]/a")).click();
+		
+		driver.findElement(By.id("name")).clear();
+		driver.findElement(By.id("name")).sendKeys("Tuna1");
+		driver.findElement(By.id("surname")).clear();
+		driver.findElement(By.id("surname")).sendKeys("Atmaca2");
+		driver.findElement(By.id("gsmNumber")).clear();
+		driver.findElement(By.id("gsmNumber")).sendKeys("5496245858");
+		driver.findElement(By.className("btn")).click();
+		
+		waitForPresence(driver, "id", "oldSecretWord");
+		driver.findElement(By.id("oldSecretWord")).sendKeys("Ta123450"); //After every executed.It should be chanced.
+		driver.findElement(By.id("newSecretWord")).sendKeys("tA123450"); //After every executed.It should be chanced.	
+		driver.findElement(By.id("confirmSecretWord")).sendKeys("tA123450"); //After every executed.It should be chanced.
+		waitForPresence(driver, "id", "passwordSaveButton");
+		driver.findElement(By.id("passwordSaveButton")).click();
+		Thread.sleep(1000);
+		
+		
+		//Succesfully Log out
+		driver.findElement(By.className("fa-angle-down")).click();
+		waitForPresence(driver, "id", "logoutForm");
+		driver.findElement(By.id("logoutForm")).click();
+		
+		
+	}
+}
